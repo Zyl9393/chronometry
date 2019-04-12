@@ -7,9 +7,9 @@ import (
 // Stopwatch implements a stopwatch which can be stopped, resumed and reset and can report its current reading
 // of time with SplitTime() as well as allow for convenient measuring of consecutive intervals using LapTime().
 type Stopwatch struct {
-	startTime, stopTime, readingTime              time.Time
-	isStopped                                     bool
-	passedDuration, accumulatedDifferenceDuration time.Duration
+	startTime, stopTime, readingTime      time.Time
+	isStopped                             bool
+	totalDuration, lapAccumulatorDuration time.Duration
 }
 
 // NewStartedStopwatch returns a started stopwatch, ready to report SplitTime() and LapTime().
@@ -45,7 +45,7 @@ func (sw *Stopwatch) IsRunning() bool {
 func (sw *Stopwatch) Reset() {
 	now := time.Now()
 	sw.startTime, sw.readingTime, sw.stopTime = now, now, now
-	sw.passedDuration, sw.accumulatedDifferenceDuration = 0, 0
+	sw.totalDuration, sw.lapAccumulatorDuration = 0, 0
 }
 
 // Resume resumes the stopwatch when it is stopped.
@@ -61,10 +61,10 @@ func (sw *Stopwatch) Stop() time.Duration {
 	if !sw.isStopped {
 		now := time.Now()
 		sw.stopTime, sw.isStopped = now, true
-		sw.passedDuration += now.Sub(sw.startTime)
-		sw.accumulatedDifferenceDuration += sw.currentSegmentDuration(now)
+		sw.totalDuration += now.Sub(sw.startTime)
+		sw.lapAccumulatorDuration += sw.currentSegmentDuration(now)
 	}
-	return sw.passedDuration
+	return sw.totalDuration
 }
 
 // CurrentSegmentDuration returns the duration since the stopwatch was last started/restarted, reset, resumed
@@ -99,18 +99,18 @@ func (sw *Stopwatch) ReadingTime() time.Time {
 // or starting/restarting or resetting the stopwatch.
 func (sw *Stopwatch) LapTime() time.Duration {
 	now := time.Now()
-	difference := sw.accumulatedDifferenceDuration
+	difference := sw.lapAccumulatorDuration
 	if !sw.isStopped {
 		difference += sw.currentSegmentDuration(now)
 	}
-	sw.readingTime, sw.accumulatedDifferenceDuration = now, 0
+	sw.readingTime, sw.lapAccumulatorDuration = now, 0
 	return difference
 }
 
 // SplitTime returns the current stopwatch reading, i.e. the total passed time observed by the stopwatch while not stopped.
 func (sw *Stopwatch) SplitTime() time.Duration {
 	if sw.isStopped {
-		return sw.passedDuration
+		return sw.totalDuration
 	}
-	return sw.passedDuration + time.Now().Sub(sw.startTime)
+	return sw.totalDuration + time.Now().Sub(sw.startTime)
 }
