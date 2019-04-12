@@ -8,25 +8,25 @@ A monotonically stable stopwatch implementation which resembles a real-life stop
 
     sw := chronometry.NewStartedStopwatch()
     time.Sleep(time.Second)
-    sw.SplitTime() // 1 second
-    sw.LapTime() // 1 second
+    sw.TotalTime() // 1 second
+    sw.TakeLapTime() // 1 second
     time.Sleep(time.Second)
     sw.Stop()
-    sw.SplitTime() // 2 seconds
-    sw.LapTime() // 1 second
+    sw.TotalTime() // 2 seconds
+    sw.TakeLapTime() // 1 second
     time.Sleep(time.Second)
-    sw.SplitTime() // 2 seconds
-    sw.LapTime() // 0 seconds
+    sw.TotalTime() // 2 seconds
+    sw.TakeLapTime() // 0 seconds
     sw.Resume()
     time.Sleep(time.Second)
     sw.Stop()
     time.Sleep(time.Second)
     sw.Resume()
     time.Sleep(time.Second)
-    sw.SplitTime() // 4 seconds
-    sw.LapTime() // 2 seconds
+    sw.TotalTime() // 4 seconds
+    sw.TakeLapTime() // 2 seconds
     sw.Restart()
-    sw.SplitTime() // 0 seconds
+    sw.TotalTime() // 0 seconds
 
 
 

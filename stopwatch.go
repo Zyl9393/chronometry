@@ -5,14 +5,14 @@ import (
 )
 
 // Stopwatch implements a stopwatch which can be stopped, resumed and reset and can report its current reading
-// of time with SplitTime() as well as allow for convenient measuring of consecutive intervals using LapTime().
+// of time with TotalTime() as well as allow for convenient measuring of consecutive intervals using TakeLapTime().
 type Stopwatch struct {
 	startTime, stopTime, readingTime      time.Time
 	isStopped                             bool
 	totalDuration, lapAccumulatorDuration time.Duration
 }
 
-// NewStartedStopwatch returns a started stopwatch, ready to report SplitTime() and LapTime().
+// NewStartedStopwatch returns a started stopwatch, ready to report TotalTime() and TakeLapTime().
 func NewStartedStopwatch() *Stopwatch {
 	now := time.Now()
 	return &Stopwatch{startTime: now, stopTime: now, readingTime: now}
@@ -95,10 +95,13 @@ func (sw *Stopwatch) ReadingTime() time.Time {
 	return sw.readingTime
 }
 
-// LapTime makes a split, returning the change in SplitTime() since last calling this function
+// TakeLapTime makes a split, returning the change in TotalTime() since last calling this function
 // or starting/restarting or resetting the stopwatch.
-func (sw *Stopwatch) LapTime() time.Duration {
-	now := time.Now()
+func (sw *Stopwatch) TakeLapTime() time.Duration {
+	return sw.takeLapTime(time.Now())
+}
+
+func (sw *Stopwatch) takeLapTime(now time.Time) time.Duration {
 	difference := sw.lapAccumulatorDuration
 	if !sw.isStopped {
 		difference += sw.currentSegmentDuration(now)
@@ -107,10 +110,20 @@ func (sw *Stopwatch) LapTime() time.Duration {
 	return difference
 }
 
-// SplitTime returns the current stopwatch reading, i.e. the total passed time observed by the stopwatch while not stopped.
-func (sw *Stopwatch) SplitTime() time.Duration {
+// TotalTime returns the current stopwatch reading, i.e. the total passed time observed by the stopwatch while not stopped.
+func (sw *Stopwatch) TotalTime() time.Duration {
+	return sw.totalTime(time.Now())
+}
+
+func (sw *Stopwatch) totalTime(now time.Time) time.Duration {
 	if sw.isStopped {
 		return sw.totalDuration
 	}
-	return sw.totalDuration + time.Now().Sub(sw.startTime)
+	return sw.totalDuration + now.Sub(sw.startTime)
+}
+
+// MakeSplit does the same as TakeLapTime(), but also returns the exact according total time.
+func (sw *Stopwatch) MakeSplit() (lapTime, totalTime time.Duration) {
+	now := time.Now()
+	return sw.takeLapTime(now), sw.totalTime(now)
 }
