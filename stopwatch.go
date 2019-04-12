@@ -18,7 +18,8 @@ func NewStartedStopwatch() *Stopwatch {
 	return &Stopwatch{startTime: now, stopTime: now, readingTime: now}
 }
 
-// NewStoppedStopwatch returns a stopwatch which needs to have Restart() or Resume() called on it in order to begin counting time.
+// NewStoppedStopwatch returns a stopwatch which needs to have Restart() or Resume() called on it in order to
+// begin counting time.
 func NewStoppedStopwatch() *Stopwatch {
 	now := time.Now()
 	return &Stopwatch{startTime: now, stopTime: now, readingTime: now, isStopped: true}
@@ -59,13 +60,15 @@ func (sw *Stopwatch) Resume() {
 func (sw *Stopwatch) Stop() time.Duration {
 	if !sw.isStopped {
 		now := time.Now()
-		sw.stopTime, sw.passedDuration, sw.accumulatedDifferenceDuration, sw.isStopped =
-			now, sw.passedDuration+now.Sub(sw.startTime), sw.accumulatedDifferenceDuration+sw.currentSegmentDuration(now), true
+		sw.stopTime, sw.isStopped = now, true
+		sw.passedDuration += now.Sub(sw.startTime)
+		sw.accumulatedDifferenceDuration += sw.currentSegmentDuration(now)
 	}
 	return sw.passedDuration
 }
 
-// CurrentSegmentDuration returns the duration since the stopwatch was last started/restarted, reset, resumed or had LapTime() called.
+// CurrentSegmentDuration returns the duration since the stopwatch was last started/restarted, reset, resumed
+// or had LapTime() called.
 func (sw *Stopwatch) CurrentSegmentDuration() time.Duration {
 	return sw.currentSegmentDuration(time.Now())
 }
