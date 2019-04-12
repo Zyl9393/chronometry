@@ -92,7 +92,7 @@ func (sw *Stopwatch) ReadingTime() time.Time {
 	return sw.readingTime
 }
 
-// LapTime returns the change in SplitTime() since last calling this function
+// LapTime makes a split, returning the change in SplitTime() since last calling this function
 // or starting/restarting or resetting the stopwatch.
 func (sw *Stopwatch) LapTime() time.Duration {
 	now := time.Now()
