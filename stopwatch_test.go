@@ -100,6 +100,30 @@ func TestStopResumeDifference(t *testing.T) {
 	durationsMatch(t, sw.ReadDifference(), time.Second*3, time.Millisecond*100, "after stop")
 }
 
+func TestDocumentationClaims(t *testing.T) {
+	sw := chronometry.NewStartedStopwatch()
+	time.Sleep(time.Second)
+	durationsMatch(t, sw.Elapsed(), time.Second, time.Millisecond*100, "test 1")
+	durationsMatch(t, sw.ReadDifference(), time.Second, time.Millisecond*100, "test 2")
+	time.Sleep(time.Second)
+	sw.Stop()
+	durationsMatch(t, sw.Elapsed(), time.Second*2, time.Millisecond*100, "test 3")
+	durationsMatch(t, sw.ReadDifference(), time.Second, time.Millisecond*100, "test 4")
+	time.Sleep(time.Second)
+	durationsMatch(t, sw.Elapsed(), time.Second*2, time.Millisecond*100, "test 5")
+	durationsMatch(t, sw.ReadDifference(), 0, time.Millisecond*100, "test 6")
+	sw.Resume()
+	time.Sleep(time.Second)
+	sw.Stop()
+	time.Sleep(time.Second)
+	sw.Resume()
+	time.Sleep(time.Second)
+	durationsMatch(t, sw.Elapsed(), time.Second*4, time.Millisecond*100, "test 7")
+	durationsMatch(t, sw.ReadDifference(), time.Second*2, time.Millisecond*100, "test 8")
+	sw.Restart()
+	durationsMatch(t, sw.Elapsed(), 0, time.Millisecond*100, "test 9")
+}
+
 func durationsMatch(t *testing.T, a, b, maxError time.Duration, context string) {
 	if a > b+maxError {
 		t.Fatalf("duration 'a' too long. (%s) a: %v; b: %v; maxError: %v", context, a, b, maxError)
