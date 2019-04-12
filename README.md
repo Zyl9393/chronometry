@@ -4,7 +4,7 @@ Package for time-keeping purposes.
 ## Features
 
 ### Stopwatch
-A monotonically stable stopwatch implementation which resembles a real-life stopwatch, best explained with some sample code:
+A monotonically stable stopwatch implementation in Golang which resembles a real-life stopwatch, best explained with some sample code:
 
     sw := chronometry.NewStartedStopwatch()
     time.Sleep(time.Second)
