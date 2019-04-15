@@ -4,6 +4,9 @@ import (
 	"time"
 )
 
+// NowFunc specifies the function used to retrieve the current time. It is changed from time.Now only during tests.
+var NowFunc = time.Now
+
 // Stopwatch implements a stopwatch which can be stopped, resumed and reset and can report its current reading
 // of time with TotalTime() as well as allow for convenient measuring of consecutive intervals using TakeLapTime().
 type Stopwatch struct {
@@ -14,14 +17,14 @@ type Stopwatch struct {
 
 // NewStartedStopwatch returns a started stopwatch, ready to report TotalTime() and TakeLapTime().
 func NewStartedStopwatch() *Stopwatch {
-	now := time.Now()
+	now := NowFunc()
 	return &Stopwatch{startTime: now, stopTime: now, readingTime: now}
 }
 
 // NewStoppedStopwatch returns a stopwatch which needs to have Restart() or Resume() called on it in order to
 // begin counting time.
 func NewStoppedStopwatch() *Stopwatch {
-	now := time.Now()
+	now := NowFunc()
 	return &Stopwatch{startTime: now, stopTime: now, readingTime: now, isStopped: true}
 }
 
@@ -43,7 +46,7 @@ func (sw *Stopwatch) IsRunning() bool {
 
 // Reset sets the stopwatch reading back to zero.
 func (sw *Stopwatch) Reset() {
-	now := time.Now()
+	now := NowFunc()
 	sw.startTime, sw.readingTime, sw.stopTime = now, now, now
 	sw.totalDuration, sw.lapAccumulatorDuration = 0, 0
 }
@@ -51,7 +54,7 @@ func (sw *Stopwatch) Reset() {
 // Resume resumes the stopwatch when it is stopped.
 func (sw *Stopwatch) Resume() {
 	if sw.isStopped {
-		now := time.Now()
+		now := NowFunc()
 		sw.startTime, sw.readingTime, sw.isStopped = now, now, false
 	}
 }
@@ -59,7 +62,7 @@ func (sw *Stopwatch) Resume() {
 // Stop stops the stopwatch, causing it to stop observing the passing of time. It can be resumed with Resume().
 func (sw *Stopwatch) Stop() time.Duration {
 	if !sw.isStopped {
-		now := time.Now()
+		now := NowFunc()
 		sw.stopTime, sw.isStopped = now, true
 		sw.totalDuration += now.Sub(sw.startTime)
 		sw.lapAccumulatorDuration += sw.currentSegmentDuration(now)
@@ -70,7 +73,7 @@ func (sw *Stopwatch) Stop() time.Duration {
 // CurrentSegmentDuration returns the duration since the stopwatch was last started/restarted, reset, resumed
 // or had TakeLapTime() called.
 func (sw *Stopwatch) CurrentSegmentDuration() time.Duration {
-	return sw.currentSegmentDuration(time.Now())
+	return sw.currentSegmentDuration(NowFunc())
 }
 
 func (sw *Stopwatch) currentSegmentDuration(now time.Time) time.Duration {
@@ -98,7 +101,7 @@ func (sw *Stopwatch) ReadingTime() time.Time {
 // TakeLapTime makes a split, returning the change in TotalTime() since last calling this function
 // or starting/restarting or resetting the stopwatch.
 func (sw *Stopwatch) TakeLapTime() time.Duration {
-	return sw.takeLapTime(time.Now())
+	return sw.takeLapTime(NowFunc())
 }
 
 func (sw *Stopwatch) takeLapTime(now time.Time) time.Duration {
@@ -112,7 +115,7 @@ func (sw *Stopwatch) takeLapTime(now time.Time) time.Duration {
 
 // TotalTime returns the current stopwatch reading, i.e. the total passed time observed by the stopwatch while not stopped.
 func (sw *Stopwatch) TotalTime() time.Duration {
-	return sw.totalTime(time.Now())
+	return sw.totalTime(NowFunc())
 }
 
 func (sw *Stopwatch) totalTime(now time.Time) time.Duration {
@@ -124,6 +127,6 @@ func (sw *Stopwatch) totalTime(now time.Time) time.Duration {
 
 // MakeSplit does the same as TakeLapTime(), but also returns the exact according total time.
 func (sw *Stopwatch) MakeSplit() (lapTime, totalTime time.Duration) {
-	now := time.Now()
+	now := NowFunc()
 	return sw.takeLapTime(now), sw.totalTime(now)
 }

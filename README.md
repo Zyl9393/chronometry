@@ -27,8 +27,3 @@ A monotonically stable stopwatch implementation in Golang which resembles a real
     sw.TakeLapTime() // 2 seconds
     sw.Restart()
     sw.TotalTime() // 0 seconds
-
-
-
-## TODO
-Mock time in tests without making the module more difficult to use.
