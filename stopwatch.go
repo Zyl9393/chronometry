@@ -68,7 +68,7 @@ func (sw *Stopwatch) Stop() time.Duration {
 }
 
 // CurrentSegmentDuration returns the duration since the stopwatch was last started/restarted, reset, resumed
-// or had LapTime() called.
+// or had TakeLapTime() called.
 func (sw *Stopwatch) CurrentSegmentDuration() time.Duration {
 	return sw.currentSegmentDuration(time.Now())
 }
@@ -90,7 +90,7 @@ func (sw *Stopwatch) StopTime() time.Time {
 	return sw.stopTime
 }
 
-// ReadingTime returns the time at which the stopwatch was last started/restarted, reset or had LapTime() called.
+// ReadingTime returns the time at which the stopwatch was last started/restarted, reset, resumed or had TakeLapTime() called.
 func (sw *Stopwatch) ReadingTime() time.Time {
 	return sw.readingTime
 }
