@@ -25,37 +25,37 @@ func init() {
 	chronometry.NowFunc = testClock.now
 }
 
-func TestTakeLapTime(t *testing.T) {
+func TestLap(t *testing.T) {
 	sw := chronometry.NewStartedStopwatch()
 	for i := 0; i < 3; i++ {
 		testClock.advance(time.Second)
-		duration := sw.TakeLapTime()
+		duration := sw.Lap()
 		durationsMatch(t, duration, time.Second, "")
 	}
 }
 
-func TestTotalTime(t *testing.T) {
+func TestTotal(t *testing.T) {
 	sw := chronometry.NewStartedStopwatch()
 	for i := 0; i < 3; i++ {
 		testClock.advance(time.Second)
-		duration := sw.TotalTime()
+		duration := sw.Total()
 		durationsMatch(t, duration, time.Second*time.Duration(i+1), "")
 	}
 }
 
-func TestStoppedTotalTime(t *testing.T) {
+func TestStoppedTotal(t *testing.T) {
 	sw := chronometry.NewStoppedStopwatch()
 	testClock.advance(time.Second)
-	if sw.TotalTime() != 0 {
+	if sw.Total() != 0 {
 		t.Fatalf("sw.SplitTime() was not 0.")
 	}
 }
 
-func TestStoppedTakeLapTime(t *testing.T) {
+func TestStoppedLap(t *testing.T) {
 	sw := chronometry.NewStoppedStopwatch()
 	testClock.advance(time.Second)
-	if sw.TakeLapTime() != 0 {
-		t.Fatalf("sw.TakeLapTime() was not 0.")
+	if sw.Lap() != 0 {
+		t.Fatalf("sw.Lap() was not 0.")
 	}
 }
 
@@ -64,10 +64,10 @@ func TestRestart(t *testing.T) {
 	testClock.advance(time.Second)
 	sw.Restart()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TotalTime(), time.Second, "")
+	durationsMatch(t, sw.Total(), time.Second, "")
 }
 
-func TestStopResumeTotalTime(t *testing.T) {
+func TestStopResumeTotal(t *testing.T) {
 	sw := chronometry.NewStartedStopwatch()
 	testClock.advance(time.Second)
 	sw.Stop()
@@ -78,7 +78,7 @@ func TestStopResumeTotalTime(t *testing.T) {
 	testClock.advance(time.Second)
 	sw.Resume()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TotalTime(), time.Second*3, "")
+	durationsMatch(t, sw.Total(), time.Second*3, "")
 }
 
 func TestStopResumeLapTime(t *testing.T) {
@@ -92,7 +92,7 @@ func TestStopResumeLapTime(t *testing.T) {
 	testClock.advance(time.Second)
 	sw.Resume()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TakeLapTime(), time.Second*3, "first try")
+	durationsMatch(t, sw.Lap(), time.Second*3, "first try")
 	testClock.advance(time.Second)
 	sw.Stop()
 	testClock.advance(time.Second)
@@ -102,7 +102,7 @@ func TestStopResumeLapTime(t *testing.T) {
 	testClock.advance(time.Second)
 	sw.Resume()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TakeLapTime(), time.Second*3, "second try")
+	durationsMatch(t, sw.Lap(), time.Second*3, "second try")
 	testClock.advance(time.Second)
 	sw.Stop()
 	testClock.advance(time.Second)
@@ -113,38 +113,38 @@ func TestStopResumeLapTime(t *testing.T) {
 	sw.Resume()
 	testClock.advance(time.Second)
 	sw.Stop()
-	durationsMatch(t, sw.TakeLapTime(), time.Second*3, "after stop")
+	durationsMatch(t, sw.Lap(), time.Second*3, "after stop")
 }
 
 func TestDocumentationClaims(t *testing.T) {
 	sw := chronometry.NewStartedStopwatch()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TotalTime(), time.Second, "test 1")
-	durationsMatch(t, sw.TakeLapTime(), time.Second, "test 2")
+	durationsMatch(t, sw.Total(), time.Second, "test 1")
+	durationsMatch(t, sw.Lap(), time.Second, "test 2")
 	testClock.advance(time.Second)
 	sw.Stop()
-	durationsMatch(t, sw.TotalTime(), time.Second*2, "test 3")
-	durationsMatch(t, sw.TakeLapTime(), time.Second, "test 4")
+	durationsMatch(t, sw.Total(), time.Second*2, "test 3")
+	durationsMatch(t, sw.Lap(), time.Second, "test 4")
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TotalTime(), time.Second*2, "test 5")
-	durationsMatch(t, sw.TakeLapTime(), 0, "test 6")
+	durationsMatch(t, sw.Total(), time.Second*2, "test 5")
+	durationsMatch(t, sw.Lap(), 0, "test 6")
 	sw.Resume()
 	testClock.advance(time.Second)
 	sw.Stop()
 	testClock.advance(time.Second)
 	sw.Resume()
 	testClock.advance(time.Second)
-	durationsMatch(t, sw.TotalTime(), time.Second*4, "test 7")
-	durationsMatch(t, sw.TakeLapTime(), time.Second*2, "test 8")
+	durationsMatch(t, sw.Total(), time.Second*4, "test 7")
+	durationsMatch(t, sw.Lap(), time.Second*2, "test 8")
 	sw.Restart()
-	durationsMatch(t, sw.TotalTime(), 0, "test 9")
+	durationsMatch(t, sw.Total(), 0, "test 9")
 }
 
-func durationsMatch(t *testing.T, a, b time.Duration, context string) {
-	if a > b {
-		t.Fatalf("duration 'a' too long. (%s) a: %v; b: %v", context, a, b)
+func durationsMatch(t *testing.T, actual, expected time.Duration, context string) {
+	if actual > expected {
+		t.Fatalf("duration too long; %s: expected: %v; actual: %v", context, expected, actual)
 	}
-	if a < b {
-		t.Fatalf("duration 'a' too short. (%s) a: %v; b: %v", context, a, b)
+	if actual < expected {
+		t.Fatalf("duration too short; %s: expected: %v; actual: %v", context, expected, actual)
 	}
 }
