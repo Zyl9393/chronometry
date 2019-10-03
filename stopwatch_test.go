@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MMulthaupt/chronometry"
+	"github.com/Zyl9393/chronometry"
 )
 
 type clock struct {
