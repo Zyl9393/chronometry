@@ -115,12 +115,12 @@ func (sw *Stopwatch) SplitTime() time.Time {
 	return sw.splitTime
 }
 
-// Lap makes a split, returning the change in Total() since last calling this function or starting/restarting or resetting the stopwatch.
+// Lap makes a split, returning the change in Total() since last calling this function or resetting or first starting the stopwatch.
 func (sw *Stopwatch) Lap() time.Duration {
 	return sw.lap(NowFunc(), true)
 }
 
-// PeekLap returns the change in Total() since last calling Lap() or starting/restarting or resetting the stopwatch.
+// PeekLap returns the change in Total() since last calling Lap() or resetting or first starting the stopwatch.
 func (sw *Stopwatch) PeekLap() time.Duration {
 	return sw.lap(NowFunc(), true)
 }

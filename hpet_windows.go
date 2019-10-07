@@ -10,21 +10,33 @@ import (
 	"unsafe"
 )
 
+/*
+#include <windows.h>
+
+LARGE_INTEGER hpetTicks() {
+	LARGE_INTEGER tickCount;
+	QueryPerformanceCounter(&tickCount);
+	return tickCount;
+}
+*/
+import "C"
+
 var tickFrequency int64
-var queryPerformanceCounterProc *windows.Proc
 var lpMonotonicReference time.Duration
 var hpMonotonicReference time.Duration
 
 func init() {
-	kernel32 := windows.MustLoadDLL("kernel32.dll")
-	queryPerformanceFrequencyProc := kernel32.MustFindProc("QueryPerformanceFrequency")
-	queryPerformanceCounterProc = kernel32.MustFindProc("QueryPerformanceCounter")
+	kernel32 := windows.NewLazySystemDLL("kernel32.dll")
+	queryPerformanceFrequencyProc := kernel32.NewProc("QueryPerformanceFrequency")
 
-	_, _, err := queryPerformanceFrequencyProc.Call(uintptr(unsafe.Pointer(&tickFrequency)))
-	if err != nil {
+	tickFrequencyC := C.calloc(1, 8)
+	r1, _, err := queryPerformanceFrequencyProc.Call(uintptr(unsafe.Pointer(tickFrequencyC)))
+	tickFrequency = *((*int64)(unsafe.Pointer(tickFrequencyC)))
+	C.free(tickFrequencyC)
+	if r1 == 0 || err != nil {
 		winErr, ok := err.(windows.Errno)
 		if !ok || winErr != 0 {
-			panic(fmt.Sprintf("QueryPerformanceFrequency() failed: %v", err))
+			panic(fmt.Sprintf("QueryPerformanceFrequency() failed: return code %d: %v", r1, err))
 		}
 	}
 
@@ -78,7 +90,7 @@ func setMonotonic(t *time.Time, m time.Duration) {
 }
 
 func hpet() time.Duration {
-	var tickCount int64
-	queryPerformanceCounterProc.Call(uintptr(unsafe.Pointer(&tickCount)))
+	tickCountC := C.hpetTicks()
+	tickCount := *((*int64)(unsafe.Pointer(&tickCountC)))
 	return time.Duration((tickCount/tickFrequency*1e9)+(tickCount%tickFrequency*1e9/tickFrequency)) * time.Nanosecond
 }
