@@ -1,5 +1,6 @@
-# v1.0.0 (2019-10-02)
+# v1.0.0 (2019-10-25)
 * Use high precision event timer on Windows for more accurate measurements.
+* Rename functions.
 
 # v0.1.1 (2019-04-15)
 * Mock `time.Now` for tests.

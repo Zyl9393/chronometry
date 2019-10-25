@@ -11,9 +11,9 @@ func TestHPETResolution(t *testing.T) {
 	zeroCount := 0
 	const loopCount = 100
 	for i := 0; i < loopCount; i++ {
-		before := chronometry.HPNow()
+		before := chronometry.Now()
 		doSmallWorkLoad()
-		after := chronometry.HPNow()
+		after := chronometry.Now()
 		diff := after.Sub(before)
 		if diff == 0 {
 			zeroCount++
@@ -25,9 +25,9 @@ func TestHPETResolution(t *testing.T) {
 }
 
 func TestHPETAccuracy(t *testing.T) {
-	before := chronometry.HPNow()
+	before := chronometry.Now()
 	time.Sleep(time.Second)
-	after := chronometry.HPNow()
+	after := chronometry.Now()
 	diff := after.Sub(before)
 	if diff > 1100000000 || diff < 900000000 {
 		t.Fatalf("error too large. diff was %v", diff)
@@ -36,12 +36,21 @@ func TestHPETAccuracy(t *testing.T) {
 
 func TestBenchHPETSpeed(t *testing.T) {
 	const loopCount = 1000
-	first := chronometry.HPNow()
+	startTime := chronometry.Now()
 	for i := 0; i < loopCount; i++ {
-		chronometry.HPNow()
+		chronometry.Now()
 	}
-	last := chronometry.HPNow()
-	t.Logf("chronometry.HPNow() takes %v per call.", last.Sub(first)/loopCount)
+	hpNowTime := chronometry.Now()
+	for i := 0; i < loopCount; i++ {
+		chronometry.HPET()
+	}
+	hpetTime := chronometry.Now()
+	for i := 0; i < loopCount; i++ {
+		time.Now()
+	}
+	goNowTime := chronometry.Now()
+	t.Logf("chronometry.Now() takes %v per call. chronometry.HPET() takes %v per call. time.Now() takes %v per call.",
+		hpNowTime.Sub(startTime)/loopCount, hpetTime.Sub(hpNowTime)/loopCount, goNowTime.Sub(hpetTime)/loopCount)
 }
 
 func doSmallWorkLoad() {
