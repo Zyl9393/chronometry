@@ -1,6 +1,8 @@
 # Chronometry
 
-![Test Status](https://github.com/Zyl9393/chronometry/workflows/CI/badge.svg?branch=master)
+<p align="left">
+  <a href="https://github.com/Zyl9393/chronometry/tree/master"><img alt="Status of tests" src="https://github.com/Zyl9393/chronometry/workflows/Tests/badge.svg?branch=master"></a>
+</p>
 
 Package for time-keeping purposes.
 

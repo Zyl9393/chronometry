@@ -1,6 +1,7 @@
 package chronometry_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -29,8 +30,12 @@ func TestHPETAccuracy(t *testing.T) {
 	time.Sleep(time.Second)
 	after := chronometry.Now()
 	diff := after.Sub(before)
-	if diff > 1100000000 || diff < 900000000 {
-		t.Fatalf("error too large. diff was %v", diff)
+	if diff < 900000000 {
+		t.Fatalf("error too large. diff was %v.", diff)
+	} else if diff > 10000000000 {
+		t.Fatalf("error too large. diff was %v.", diff)
+	} else if diff > 1100000000 {
+		t.Logf("error looks large. diff was %v. Ignore for slow test machines.", diff)
 	}
 }
 
@@ -49,12 +54,12 @@ func TestBenchHPETSpeed(t *testing.T) {
 		time.Now()
 	}
 	goNowTime := chronometry.Now()
-	t.Logf("chronometry.Now() takes %v per call. chronometry.HPET() takes %v per call. time.Now() takes %v per call.",
+	fmt.Printf("chronometry.Now() takes %v per call. chronometry.HPET() takes %v per call. time.Now() takes %v per call.\n",
 		hpNowTime.Sub(startTime)/loopCount, hpetTime.Sub(hpNowTime)/loopCount, goNowTime.Sub(hpetTime)/loopCount)
 }
 
 func doSmallWorkLoad() {
-	const dataSize = 10000
+	const dataSize = 1000
 	data := make([]int, dataSize)
 	for i := 0; i < dataSize; i++ {
 		data[i] = i*7 + 42
