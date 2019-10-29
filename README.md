@@ -1,7 +1,7 @@
 # Chronometry
 
 <p align="left">
-  <a href="https://github.com/Zyl9393/chronometry/tree/master"><img alt="Status of tests" src="https://github.com/Zyl9393/chronometry/workflows/Tests/badge.svg?branch=master"></a>
+  <a href="https://github.com/Zyl9393/chronometry/tree/master"><img alt="Status of tests" title="Status of tests" src="https://github.com/Zyl9393/chronometry/workflows/Tests/badge.svg?branch=master"></a>
 </p>
 
 Package for time-keeping purposes.
