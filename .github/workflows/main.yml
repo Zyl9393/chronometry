@@ -1,0 +1,27 @@
+name: CI
+
+on: [push]
+
+jobs:
+
+  test-unix:
+    runs-on: ubuntu-18.04
+    container:
+      image: golang:1.13.3-alpine3.10
+      env: { "GO111MODULE": "on" }
+    steps:
+      - name: "Test on Unix"
+        timeout-minutes: 1
+        run: |
+          go test -v ./...
+
+  test-windows:
+    runs-on: windows-2019
+    container:
+      image: winamd64/golang:1.13.2-nanoserver
+      env: { "GO111MODULE": "on" }
+    steps:
+      - name: "Test on Unix"
+        timeout-minutes: 1
+        run: |
+          go test -v ./...
