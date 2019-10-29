@@ -1,4 +1,7 @@
 # Chronometry
+
+![Test Status](https://github.com/Zyl9393/chronometry/workflows/CI/badge.svg?branch=master)
+
 Package for time-keeping purposes.
 
 ## Features
