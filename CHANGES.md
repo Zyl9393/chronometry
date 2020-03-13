@@ -1,5 +1,6 @@
 # v1.1.0 (2020-03-13)
 * Added `chronometry.BenchExecutionTime()`.
+* Minimal optimization affecting `chronometry.Now()`.
 
 # v1.0.0 (2019-10-25)
 * Use high precision event timer on Windows for more accurate measurements.

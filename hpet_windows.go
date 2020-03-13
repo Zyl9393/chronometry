@@ -66,8 +66,7 @@ func determineReferenceTimes() {
 func hpNow() time.Time {
 	var now time.Time
 	var hpNow time.Duration
-	now = time.Now()
-	hpNow = hpet()
+	now, hpNow = time.Now(), hpet()
 	setMonotonic(&now, lpMonotonicReference+(hpNow-hpMonotonicReference))
 	return now
 }
