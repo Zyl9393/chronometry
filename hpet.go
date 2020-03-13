@@ -3,6 +3,7 @@ package chronometry
 import "time"
 
 // BenchExecutionTime returns the minimum expectable execution time of the given function f.
+// f is called multiple times to determine this.
 func BenchExecutionTime(f func()) time.Duration {
 	viableSampleCount := 10
 	const maximumSampleCount = 100000
