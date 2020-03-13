@@ -39,23 +39,11 @@ func TestHPETAccuracy(t *testing.T) {
 	}
 }
 
-func TestBenchHPETSpeed(t *testing.T) {
-	const loopCount = 1000
-	startTime := chronometry.Now()
-	for i := 0; i < loopCount; i++ {
-		chronometry.Now()
-	}
-	hpNowTime := chronometry.Now()
-	for i := 0; i < loopCount; i++ {
-		chronometry.HPET()
-	}
-	hpetTime := chronometry.Now()
-	for i := 0; i < loopCount; i++ {
-		time.Now()
-	}
-	goNowTime := chronometry.Now()
-	fmt.Printf("chronometry.Now() takes %v per call. chronometry.HPET() takes %v per call. time.Now() takes %v per call.\n",
-		hpNowTime.Sub(startTime)/loopCount, hpetTime.Sub(hpNowTime)/loopCount, goNowTime.Sub(hpetTime)/loopCount)
+func TestBenchExecutionTime(t *testing.T) {
+	// Here, about 2 ns extra for each function on a 4.2 GHz processor due to wrapping the parameter in a func(){} to get rid of the return argument.
+	fmt.Printf("chronometry.Now() takes %v per call.\n", chronometry.BenchExecutionTime(func() { chronometry.Now() }))
+	fmt.Printf("chronometry.HPET() takes %v per call.\n", chronometry.BenchExecutionTime(func() { chronometry.HPET() }))
+	fmt.Printf("time.Now() takes %v per call.\n", chronometry.BenchExecutionTime(func() { time.Now() }))
 }
 
 func doSmallWorkLoad() {
