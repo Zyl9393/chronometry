@@ -140,6 +140,16 @@ func TestDocumentationClaims(t *testing.T) {
 	durationsMatch(t, sw.Total(), 0, "test 9")
 }
 
+func TestPeekLap(t *testing.T) {
+	sw := chronometry.NewStartedStopwatch()
+	testClock.advance(time.Hour)
+	durationsMatch(t, sw.Lap(), time.Hour, "test 1")
+	testClock.advance(time.Second)
+	durationsMatch(t, sw.PeekLap(), time.Second, "test 2")
+	testClock.advance(time.Second)
+	durationsMatch(t, sw.PeekLap(), time.Second*2, "test 3")
+}
+
 func durationsMatch(t *testing.T, actual, expected time.Duration, context string) {
 	if actual > expected {
 		t.Fatalf("duration too long; %s: expected: %v; actual: %v", context, expected, actual)

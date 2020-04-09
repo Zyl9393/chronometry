@@ -122,7 +122,7 @@ func (sw *Stopwatch) Lap() time.Duration {
 
 // PeekLap returns the change in Total() since last calling Lap() or resetting or first starting the stopwatch.
 func (sw *Stopwatch) PeekLap() time.Duration {
-	return sw.lap(NowFunc(), true)
+	return sw.lap(NowFunc(), false)
 }
 
 func (sw *Stopwatch) lap(now time.Time, split bool) time.Duration {

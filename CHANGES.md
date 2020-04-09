@@ -1,3 +1,6 @@
+# v1.2.0 (2020-04-09)
+* Fix `PeekLap()` doing the same as `Lap()` with added test.
+
 # v1.1.0 (2020-03-13)
 * Added `chronometry.BenchExecutionTime()`.
 * Minimal optimization affecting `chronometry.Now()`.
